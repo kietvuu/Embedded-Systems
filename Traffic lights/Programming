@@ -1,0 +1,44 @@
+//Plan and implement traffic lights with Wokwi. You need three LEDs. Three current limiting resistors. Single pedestrian switch.
+//If the switch is not pressed, the traffic lights work normally and change every 2 seconds.
+//If the switch is pressed, the light changes to red for cars, allowing pedestrians to cross the road.
+// link to Wokwi:https://wokwi.com/projects/391787295989692417
+
+#include <Arduino.h>
+
+const int redPin = 4;
+const int yellowPin = 0;
+const int greenPin = 2;
+const int switchPin = 23;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(yellowPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(switchPin, INPUT_PULLUP);
+}
+
+void press() {
+  if (digitalRead(switchPin) == LOW) {
+    // Pedestrian switch is pressed, initiate pedestrian mode
+    digitalWrite(redPin, HIGH);
+    digitalWrite(yellowPin, LOW);
+    digitalWrite(greenPin, LOW);
+    delay(5000); // 5 seconds for pedestrians to cross
+  }
+}
+
+void loop() {
+  // Check if the switch is pressed
+  press();
+
+  // Normal traffic light cycle
+  digitalWrite(redPin, HIGH);
+  delay(2000); // Red for cars
+  digitalWrite(redPin, LOW);
+  digitalWrite(yellowPin, HIGH);
+  delay(1000); // Yellow for cars
+  digitalWrite(yellowPin, LOW);
+  digitalWrite(greenPin, HIGH);
+  delay(2000); // Green for cars
+  digitalWrite(greenPin, LOW);
+}
