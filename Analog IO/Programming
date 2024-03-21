@@ -1,0 +1,49 @@
+//Make 2 servo motor control joystick.
+//The horizontal movement of the controller moves the first servo.
+//The vertical movement of the controller moves the second servo.
+//When the joystick controller is released, both servos automatically turn to the center position.
+//https://wokwi.com/projects/392418902553284609
+
+
+#include <ESP32Servo.h>
+ 
+const int servo1Pin = 4; // PWM pin for first servo
+const int servo2Pin = 16; // PWM pin for second servo
+const int xPin = 2;     // Analog pin for horizontal movement
+const int yPin = 0;     // Analog pin for vertical movement
+ 
+Servo servo1;
+Servo servo2;
+ 
+void setup() {
+  Serial.begin(115200);
+  servo1.attach(servo1Pin);
+  servo2.attach(servo2Pin);
+ 
+  servo1.write(90); // Set servo1 to 90 degrees
+  servo2.write(90);
+}
+ 
+void loop() {
+  int xValue = analogRead(xPin);
+  int yValue = analogRead(yPin);
+ 
+  // Map analog readings to servo angles
+  int angle1 = map(xValue, 4095, 0, 0, 180);
+  int angle2 = map(yValue, 4095, 0, 0, 180);
+ 
+  // Sweep servo1
+  int currentAngle1 = servo1.read();
+  for (int i = currentAngle1; i != angle1; i += (angle1 > currentAngle1) ? 1 : -1) {
+    servo1.write(i);
+    delay(15);
+  }
+ 
+  // Sweep servo2
+  int currentAngle2 = servo2.read();
+  for (int i = currentAngle2; i != angle2; i += (angle2 > currentAngle2) ? 1 : -1) {
+    servo2.write(i);
+    delay(15);
+  }
+  delay(100);
+}
