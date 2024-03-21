@@ -1,0 +1,33 @@
+//Write On to the serial monitor and this turn on the LED 
+//And Off turns off LED. If command is something else microcontroller 
+//write invalid command to the Serial monitor 
+//link to wokwi: https://wokwi.com/projects/391786526475331585
+#include <Arduino.h>
+
+#define LED_PIN 2
+bool led_status = false;
+String command;
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(LED_PIN, OUTPUT);
+}
+
+void loop() {
+    if (Serial.available() > 0) {
+        command = Serial.readStringUntil('\n');
+
+        if (command == "on") {
+            digitalWrite(LED_PIN, HIGH); // Turn the LED on
+            led_status = true;
+            Serial.println("LED turned on");
+        } else if (command == "off") {
+            digitalWrite(LED_PIN, LOW); // Turn the LED off
+            led_status = false;
+            Serial.println("LED turned off");
+        } else {
+            // Invalid command
+            Serial.println("Invalid command");
+        }
+    }
+}
