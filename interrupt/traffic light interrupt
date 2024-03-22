@@ -1,0 +1,67 @@
+//https://wokwi.com/projects/393059068822653953
+#include <Arduino.h>
+
+const int redPin = 32;
+const int yellowPin = 33;
+const int greenPin = 25;
+const int buttonPin = 19;
+
+volatile bool pedestrianPressed = false;
+
+void handleButtonPress() {
+  pedestrianPressed = true;
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(redPin, OUTPUT);
+  pinMode(yellowPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+
+  attachInterrupt(digitalPinToInterrupt(buttonPin), handleButtonPress, FALLING);
+}
+
+void loop() {
+  unsigned long startTime = millis();
+
+  // Traffic light cycle
+  digitalWrite(greenPin, HIGH);  // Green light
+  digitalWrite(redPin, LOW);
+  digitalWrite(yellowPin, LOW);
+  delay(5000); //on for 5s
+  Serial.print("Green Light: ");
+  Serial.println((millis() - startTime) / 1000); 
+
+  startTime = millis(); 
+
+  if (pedestrianPressed) {
+    // If pedestrian button is pressed, extend red light duration
+    digitalWrite(greenPin, LOW);
+    digitalWrite(yellowPin, HIGH);  // Yellow light
+    delay(2000);  //on for 2s
+    Serial.print("Yellow Light: ");
+    Serial.println((millis() - startTime) / 1000); 
+
+    digitalWrite(yellowPin, LOW);
+    digitalWrite(redPin, HIGH);  // Red light
+    delay(10000);  //on for 10s
+    Serial.print("Red Light: ");
+    Serial.println((millis() - startTime) / 1000); 
+
+    pedestrianPressed = false;  
+  } else {
+    // Normal red light duration
+    digitalWrite(greenPin, LOW);
+    digitalWrite(yellowPin, HIGH);  // Yellow light
+    delay(2000);  //on for 2s
+    Serial.print("Yellow Light: ");
+    Serial.println((millis() - startTime) / 1000); 
+
+    digitalWrite(yellowPin, LOW);
+    digitalWrite(redPin, HIGH);  // Red light
+    delay(5000);  //on for 5s
+    Serial.print("Red Light: ");
+    Serial.println((millis() - startTime) / 1000); 
+  }
+}
