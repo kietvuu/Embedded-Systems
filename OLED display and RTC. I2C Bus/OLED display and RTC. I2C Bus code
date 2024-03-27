@@ -1,0 +1,76 @@
+#https://wokwi.com/projects/393521045047126017
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+
+#define BTN_UP 14
+#define BTN_DOWN 18
+#define BTN_LEFT 19
+#define BTN_RIGHT 12
+
+#define SQUARE_SIZE 10
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+
+int squareX = 64;
+int squareY = 32;
+
+void setup() {
+  Serial.begin(115200);
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println("display not found");
+    while (1);
+  }
+
+  pinMode(BTN_UP, INPUT_PULLUP);
+  pinMode(BTN_DOWN, INPUT_PULLUP);
+  pinMode(BTN_LEFT, INPUT_PULLUP);
+  pinMode(BTN_RIGHT, INPUT_PULLUP);
+
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(10, 10);
+  display.display();
+  display.clearDisplay();
+  display.display();
+  delay(2000);
+
+  drawSquare();
+}
+
+void loop() {
+  handleButtons();
+}
+
+void drawSquare() {
+  display.clearDisplay();
+  display.drawRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE, WHITE);
+  display.display();
+}
+
+void handleButtons() {
+  if (digitalRead(BTN_UP) == LOW && squareY > 0) {
+    squareY--;
+    drawSquare();
+    delay(100);
+  }
+  if (digitalRead(BTN_DOWN) == LOW && squareY < SCREEN_HEIGHT - SQUARE_SIZE) {
+    squareY++;
+    drawSquare();
+    delay(100);
+  }
+  if (digitalRead(BTN_LEFT) == LOW && squareX > 0) {
+    squareX--;
+    drawSquare();
+    delay(100);
+  }
+  if (digitalRead(BTN_RIGHT) == LOW && squareX < SCREEN_WIDTH - SQUARE_SIZE) {
+    squareX++;
+    drawSquare();
+    delay(100);
+  }
+}
