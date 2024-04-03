@@ -1,0 +1,95 @@
+//https://wokwi.com/projects/394148694465629185
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <RTClib.h> 
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+
+#define OLED_RESET -1
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+RTC_DS3231 rtc;
+
+enum DisplayState {
+  DISPLAY_TIME,
+  DISPLAY_DATE
+};
+
+DisplayState currentState = DISPLAY_TIME;
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Initialize RTC
+  if (!rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    while (1);
+  }
+  
+  // Check if RTC is running, set time if not
+  DateTime now = rtc.now();
+  if (now.year() < 2021) {
+    Serial.println("RTC is not running, setting time...");
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  }
+
+  // Initialize display
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;);
+  }
+}
+
+void loop() {
+  updateDisplay(); //show as requirment
+  delay(2000);
+}
+
+void updateDisplay() {
+  display.clearDisplay();
+  if (currentState == DISPLAY_TIME) {
+    displayTime();
+    currentState = DISPLAY_DATE;
+  } else {
+    displayDate();
+    currentState = DISPLAY_TIME;
+  }
+  display.display();
+}
+
+void displayTime() {
+  DateTime now = rtc.now();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.print("Time: ");
+  display.print(now.hour(), DEC);
+  display.print(':');
+  if (now.minute() < 10) {
+    display.print('0');
+  }
+  display.print(now.minute(), DEC);
+  display.print(':');
+  if (now.second() < 10) {
+    display.print('0');
+  }
+  display.println(now.second(), DEC);
+}
+
+void displayDate() {
+  DateTime now = rtc.now();
+  const char* daysOfTheWeek[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0); 
+  display.print("Date: ");
+  display.print(now.day(), DEC);
+  display.print('/');
+  display.print(now.month(), DEC);
+  display.print('/');
+  display.println(now.year(), DEC);
+  display.print("Day: ");
+  display.println(daysOfTheWeek[now.dayOfTheWeek()]);
+}
