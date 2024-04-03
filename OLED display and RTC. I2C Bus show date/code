@@ -1,3 +1,7 @@
+//Step 1. The display shows the time for 2 seconds. 
+//Step 2. The display shows the date and name of day for 2 seconds.
+//Step 3 (Optional) Convert the time from a number to an analogue clock.
+
 //https://wokwi.com/projects/394148694465629185
 #include <Wire.h>
 #include <Adafruit_GFX.h>
