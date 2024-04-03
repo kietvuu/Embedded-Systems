@@ -1,4 +1,8 @@
-#https://wokwi.com/projects/393521045047126017
+//Make a program to control the square on the screen.
+//The square is controlled by switches. For example, the up button moves the square upwards
+//and the down button moves it in the opposite direction.
+
+//https://wokwi.com/projects/393521045047126017
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
