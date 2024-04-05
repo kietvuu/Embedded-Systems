@@ -1,0 +1,79 @@
+//This is the real adruino connecting to my computer and code with visual studio code and platformio extension, this is my src/main.cpp file. 
+//This code make my node esp 32 connect to my phone via bluetooth and control the servo motor by phone with app "Serial Bluetooth Terminal"
+#include <Arduino.h>
+#include "BluetoothSerial.h"
+#include <ESP32Servo.h>
+
+BluetoothSerial SerialBT;
+Servo myServo;
+
+// Function declarations
+void turnRight();
+void turnLeft();
+
+int angle = 0; // Initial angle
+
+void setup() {
+  Serial.begin(9600);
+  SerialBT.begin("KietVu");
+  
+  myServo.setPeriodHertz(50);
+  
+  
+  myServo.attach(12); 
+}
+
+
+
+void loop() {
+  if (Serial.available()) {
+    char c = Serial.read();
+    if (c == '1') {
+      turnRight();
+    } else if (c == '0') {
+      turnLeft();
+    }
+  }
+
+  if (SerialBT.available()) {
+    char c = SerialBT.read();
+    if (c == '1') {
+      turnRight();
+    } else if (c == '0') {
+      turnLeft();
+    }
+  }
+  
+  if(Serial.available()){
+    SerialBT.write(Serial.read());
+  }
+  if(SerialBT.available()){
+    Serial.write(SerialBT.read());
+  }
+  delay(100);
+
+}
+
+
+ 
+
+// Function definitions
+void turnRight() {
+  angle += 180; 
+  if (angle > 180) {
+    angle = 180; 
+  }
+  myServo.write(angle);
+  SerialBT.write(angle);
+  delay(100); 
+}
+
+void turnLeft() {
+  angle -= 180; 
+  if (angle < 0) {
+    angle = 0; 
+  }
+  myServo.write(angle);
+  SerialBT.write(angle);
+  delay(100); 
+}
