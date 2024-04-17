@@ -1,0 +1,69 @@
+/*Make a program using registers.
+
+Do not use the digitalWrite or pinMode commands.
+
+Pressing button 1 turns on the LEDs in this order (number 1 LED is on and number 0 is off)
+
+10000001
+
+01000010    
+
+00100100
+
+00011000
+
+00000000 
+
+Pressing button 2 will light the LEDs in this order
+
+11111111
+
+01111110    
+
+00111100
+
+00011000
+
+00000000*/
+
+
+//https://wokwi.com/projects/395410357247457281
+void setup() {
+  DDRD = 0xFF; 
+  DDRB &= ~0b00000011; 
+  PORTB = 0b00000011; 
+  PORTD = 0b00000000; 
+
+}
+
+void loop() {
+  if (!(PINB & 0b00000001)) { // If button 1 is pressed
+    lightPattern1(); 
+  }
+  if (!(PINB & 0b00000010)) { // If button 2 is pressed
+    lightPattern2(); 
+  }
+}
+
+void lightPattern1() {
+  PORTD = 0b10000001; 
+  delay(1000);
+  PORTD = 0b01000010;
+  delay(1000);
+  PORTD = 0b00100100;
+  delay(1000);
+  PORTD = 0b00011000;
+  delay(1000);
+  PORTD = 0b00000000;
+}
+
+void lightPattern2() {
+  PORTD = 0b11111111; 
+  delay(1000);
+  PORTD = 0b01111110;
+  delay(1000);
+  PORTD = 0b00111100;
+  delay(1000);
+  PORTD = 0b00011000;
+  delay(1000);
+  PORTD = 0b00000000; }
